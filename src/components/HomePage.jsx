@@ -1,67 +1,71 @@
 import * as React from "react";
 import "../index.css";
 import Nav from "./components/navbar";
-import Footer from "./components/footer";
-import hand from "../public/hand.png"
-import sliders from "../public/sliders.png"
+import homeImage from "../public/home1.jpg"
+import Card from "./components/card";
 
 
 function Home() {
+  const profiles = [{
+    name: 'Chaymae Dihaji',
+    position: 'Software Engineer'
+  },
+  {
+    name: 'Mohamed Boudrar',
+    position: 'Software Engineer'
+  },
+  {
+    name: 'Mohamed Berrahou',
+    position: 'Software Engineer'
+  },
+  {
+    name: 'Amine Mansour',
+    position: 'Software Engineer'
+  }
+]
+  
   return (
     <>
-    <div className="bg-black h-screen">
-    <Nav></Nav>
-    <div className="flex flex-col items-center">
-      
-      <div className="mt-20 w-full max-w-[1128px] max-md:mt-10 max-md:max-w-full">
-        <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-          <div className="flex flex-col w-[57%] max-md:ml-0 max-md:w-full">
-            <div className="flex flex-col grow max-md:mt-10 max-md:max-w-full">
-              <div className="max-md:max-w-full">
-                <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-                  <div className="flex flex-col w-[36%] max-md:ml-0 max-md:w-full">
-                    <img
-                      loading="lazy"
-                      src={hand}
-                      className="grow shrink-0 max-w-full aspect-[1.01] w-[175px] max-md:mt-4"
-                    />
-                  </div>
-                  <div className="flex flex-col ml-5 w-[64%] max-md:ml-0 max-md:w-full">
-                    <div className="self-stretch my-auto text-2xl font-bold text-center text-white max-md:mt-10">
-                      Ask questions, Get answers
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mx-8 mt-16 max-md:mt-10 max-md:mr-2.5 max-md:max-w-full">
-                <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-                  <div className="flex flex-col w-[30%] max-md:ml-0 max-md:w-full">
-                    <img
-                      loading="lazy"
-                      src={sliders}
-                      className="shrink-0 max-w-full aspect-square w-[125px] max-md:mt-10"
-                    />
-                  </div>
-                  <div className="flex flex-col ml-5 w-[70%] max-md:ml-0 max-md:w-full">
-                    <div className="self-stretch my-auto text-2xl font-bold text-center text-white max-md:mt-10">
-                      People’s opinion matters
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div>
+      <Nav />
+      <div className="bg-gray-100">
+        <div className="container mx-auto py-20">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-4">Welcome to Survey App</h1>
+            <p className="text-lg text-gray-700 mb-8">Start taking surveys and gather valuable feedback from your audience.</p>
+            <a href="/createSondage" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full inline-block">Get Started</a>
           </div>
-          <div className="flex flex-col ml-5 w-[43%] max-md:ml-0 max-md:w-full">
-            <div className="py-28">
-              <button className="justify-center items-center self-stretch px-16 py-10 my-auto w-full text-2xl font-bold text-center text-black underline bg-white rounded-[50px] max-md:px-5 max-md:mt-10 max-md:max-w-full"><a href="/createSondage" className="underline text-current">Creer un Sondage</a></button>
+        </div>
+      </div>
+      <div className="container mx-auto py-16">
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">Why Choose Us?</h2>
+          <p className="text-lg text-gray-700 mb-8">We provide a simple and efficient way to create and conduct surveys, allowing you to gather valuable insights from your audience.</p>
+          <div className="flex justify-center">
+            
+          </div>
+        </div>
+      </div>
+      <div className="bg-gray-100">
+        <div className="container mx-auto py-20">
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">Meet our team</h1>
+            <div className="flex flex-wrap justify-center">
+              {profiles.map(profile => (
+                <Card 
+                  key={profile.id}
+                  image={profile.image}
+                  name={profile.name}
+                  position={profile.position}
+                />
+              ))}
             </div>
           </div>
         </div>
       </div>
-      </div>
-      <Footer></Footer>
-      </div>
+    </div>
     </>
+
   );
 }
 export default Home;

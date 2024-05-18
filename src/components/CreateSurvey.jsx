@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import "../index.css";
 import Nav from "./components/navbar";
-import Footer from "./components/footer";
+
 import Question from "./components/question";
 import { db } from "../fireBase/fireBase"
 import { addDoc, collection } from 'firebase/firestore';
+
 
 function CreateSurvey() {
     const [titre, setTitre] = useState('');
@@ -14,21 +15,18 @@ function CreateSurvey() {
 
     const col = collection(db, "surveys")
     const clickdon = () => {
-        console.log('title:', titre)
-        console.log('desc:', description)
-        console.log('qeustion:', questions)
         const obj = {
             titre, description, questions
         }
         setData(e => ([...e, obj]))
-        console.log(obj)
         addDoc(col, obj);
 
         setTitre("");
         setDescription("");
         setQuestions([]);
+        alert("Survey created successfuly")
 
-    }
+    };
 
     const handleTitreChange = (e) => {
         setTitre(e.target.value);
@@ -68,65 +66,74 @@ function CreateSurvey() {
         setQuestions(updatedQuestions);
 
     };
+    const supprimerChoix = (questionIndex, choixIndex) => {
+        const updatedQuestions = [...questions];
+        updatedQuestions[questionIndex].choix.splice(choixIndex, 1);
+        setQuestions(updatedQuestions);
+    };
+    const supprimerquestion = (questionIndex) => {
+        const updatedQuestions = [...questions];
+        updatedQuestions.splice(questionIndex, 1);
+        setQuestions(updatedQuestions);
+    };
+    
 
     return (
-        <div className="bg-black min-h-screen">
-            <Nav />
-
-            <div className="flex flex-col items-center justify-center">
-                <div className="bg-white rounded-3xl p-10 w-[1141px] max-md:w-full mt-10">
-                    <div className="text-4xl font-bold text-center text-black mb-8">
-                        Créer un sondage:
-                    </div>
-                    <div className="flex flex-col items-center justify-center">
-                        <input
-                            type="text"
-                            placeholder="Title"
-                            value={titre}
-                            onChange={handleTitreChange}
-                            className="px-16 py-2 text-2xl font-bold text-center bg-gray-200 rounded-[50px] w-[521px] max-md:px-5"
-                            required
-                        />
-
-                        <textarea
-                            type="text"
-                            placeholder="Description"
-                            value={description}
-                            onChange={handleDescriptionChange}
-                            className="justify-center items-center px-16 py-5 mt-8 max-w-full text-2xl font-bold text-center bg-gray-200 rounded-[50px] w-[521px] max-md:px-5"
-                            required
-                        />
-                    </div>
-
-                    <div className=" gap-5 items-center mt-12 w-full text-2xl text-black max-w-[1141px] max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
-                        {questions.map((questionData, index) => (
-                            <Question
-                                key={index}
-                                question={questionData.question}
-                                choix={questionData.choix}
-                                handleQuestionChange={(value) => handleQuestionChange(index, value)}
-                                handleChoiceChange={(choiceIndex, value) => handleChoiceChange(index, choiceIndex, value)}
-                                ajouterChoix={() => ajouterChoix(index)}
-                            />
-                        ))}
-                    </div>
-
-                    <div className="flex gap-5 items-center font-bold max-w-[1141px] max-md:flex-wrap max-md:mt-10 max-md:max-w-full mt-5">
-                        <button
-                            className="justify-center px-7 py-2 bg-gray-200 rounded-[50px] max-md:px-5"
-                            onClick={ajouterQuestion}
-                        >
-                            Ajouter une question
-                        </button>
-                        <button className="grow justify-center items-center px-16 py-2 whitespace-nowrap bg-green-500 rounded-[50px] w-fit max-md:px-5" onClick={clickdon}>
-                            Done
-                        </button>
-                    </div>
-                </div>
+        <div className="bg-gray-100">
+    <Nav />
+    <div className="container mx-auto py-10">
+        <div className="bg-white rounded-lg p-6 md:p-10">
+            <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                Créer un sondage
+            </h1>
+            <div className="space-y-4">
+                <input
+                    type="text"
+                    placeholder="Title"
+                    value={titre}
+                    onChange={handleTitreChange}
+                    className="input-field bg-gray-200 block w-full rounded-lg px-4 py-2"
+                    required
+                />
+                <textarea
+                    type="text"
+                    placeholder="Description"
+                    value={description}
+                    onChange={handleDescriptionChange}
+                    className="input-field bg-gray-200 block w-full rounded-lg px-4 py-2"
+                    required
+                />
             </div>
-
-            <Footer />
+           
+            <div className="mt-8 space-y-4">
+                {questions.map((questionData, index) => (
+                    <Question
+                        key={index}
+                        question={questionData.question}
+                        choix={questionData.choix}
+                        handleQuestionChange={(value) => handleQuestionChange(index, value)}
+                        handleChoiceChange={(choiceIndex, value) => handleChoiceChange(index, choiceIndex, value)}
+                        ajouterChoix={() => ajouterChoix(index)}
+                        supprimerChoix={(choixIndex) => supprimerChoix(index, choixIndex)}
+                        supprimerquestion={() => supprimerquestion(index)}
+                    />
+                ))}
+            </div>
+            <div className="mt-8 flex justify-between">
+                <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-[5px] inline-block"
+                    onClick={ajouterQuestion}
+                >
+                    Add question
+                </button>
+                <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-[5px] inline-block" onClick={clickdon}>
+                    Done
+                </button>
+            </div>
         </div>
+    </div>
+</div>
+    
     );
 }
 

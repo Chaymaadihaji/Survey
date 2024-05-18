@@ -1,29 +1,21 @@
 import * as React from "react";
-import "../../index.css"
-import logo from "../../public/logo.png"
+import "../../index.css";
+import logo from "../../public/logo.png";
 
 function Nav() {
   return (
-    <>
-    <div className="flex flex-col items-center py-10 bg-black ">
-      <div className="flex gap-5 px-5 w-full text-white max-w-[1150px] max-md:flex-wrap max-md:max-w-full">
-      <div className="shrink-0 max-w-full aspect-square w-[100px] h-[25px] max-md:mt-10 -mt-7  mr-[200px]">
-    <img src={logo} alt="Logo" />
-</div>
-
-        <div className="flex gap-5 self-start mt-1 text-2xl text-center max-md:flex-wrap max-md:max-w-full">
-        <a href="/" className="underline text-current">Acceuil</a>
-        <a href="/createSondage" className="underline text-current">Creer Sondage</a>
-        <a href="/Sondages" className="underline text-current">Les Sondages</a>
-        <a href="/contact" className="underline text-current">Contact</a>
-
-
-        </div>
+    <nav className="bg-gray-800 p-4">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="text-white font-bold text-xl">Survey App</div>
+        <ul className="flex space-x-4">
+          <li><a href="/" className="text-white hover:text-gray-300">Home</a></li>
+          <li><a href="/createSondage" className="text-white hover:text-gray-300">Create Survey</a></li>
+          <li><a href="/Sondages" className="text-white hover:text-gray-300">Surveys</a></li>
+          {/* Add more links as needed */}
+        </ul>
       </div>
-      <div className="self-stretch mt-8 w-full bg-white border border-white border-solid min-h-[1px] max-md:max-w-full" />
-    </div>
-    
-    </>
-  )
+    </nav>
+  );
 }
+
 export default Nav;

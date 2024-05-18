@@ -1,67 +1,116 @@
 import React, { useState } from 'react';
 
-function QuestionComponent({ questions, choix }) {
-    // Initialize state for selected choices and click counts of each choice
-    const [clickCounts, setClickCounts] = useState(choix.map(() => 0));
-    const [selectedChoices, setSelectedChoices] = useState(choix.map(() => false)); // Keeps track of selected choices
 
-    // State to track the total number of clicks
-    const [totalClicks, setTotalClicks] = useState(0);
 
-    // Function to handle click events
-    const handleChoiceClick = (index) => {
-        // Toggle the selection state of the clicked choice
-        setSelectedChoices((prevSelected) => {
-            const newSelected = [...prevSelected];
-            newSelected[index] = !prevSelected[index]; // Toggle selection
+function QuestionComponent({ onClose, titre, description, q }) {
+  // Initialize state for selected choices and click counts of each choice
+  const [counts, setCounts] = useState(
+    q.reduce((acc, question) => {
+      acc[question.question] = question.choix.reduce((a, c) => {
+        a[c] = 0;
+        return a;
+      }, {});
+      return acc;
+    }, {})
+  );
 
-            // Update the click counts based on the new selection state
-            setClickCounts((prevCounts) => {
-                const newCounts = [...prevCounts];
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-                // Increase or decrease the count based on whether the choice was selected or deselected
-                if (newSelected[index]) {
-                    newCounts[index]++;
-                    setTotalClicks((prevTotal) => prevTotal + 1);
-                } else {
-                    newCounts[index]--;
-                    setTotalClicks((prevTotal) => prevTotal - 1);
-                }
+  const handleClick = (question, choice) => {
+    setCounts(prevCounts => {
+      const newCounts = { ...prevCounts };
+      newCounts[question][choice] += 1;
+      return newCounts;
+    });
+  };
 
-                return newCounts;
-            });
+  const totalClicks = (question) => {
+    return Object.values(counts[question]).reduce((sum, count) => sum + count, 0);
+  };
 
-            return newSelected;
-        });
-    };
+  const getPercentage = (question, choice) => {
+    const total = totalClicks(question);
+    return total > 0 ? ((counts[question][choice] / total) * 100).toFixed(2) : 0;
+  };
 
-    return (
-        <div className="grid">
-            <div className="flex flex-col items-center mt-3 gap-4">
-                {/* Display the question at the top */}
-                <h3 className="text-lg font-bold mb-4">{questions}</h3>
+  const handleNext = () => {
+    setCurrentQuestionIndex(prevIndex => Math.min(prevIndex + 1, q.length - 1));
+  };
 
-                {choix.map((choix, index) => {
-                    // Calculate the percentage of clicks for each choice
-                    const percentage = totalClicks > 0 ? (clickCounts[index] / totalClicks) * 100 : 0;
+  const handleBack = () => {
+    setCurrentQuestionIndex(prevIndex => Math.max(prevIndex - 1, 0));
+  };
 
-                    return (
-                        <div
-                            key={index}
-                            onClick={() => handleChoiceClick(index)}
-                            className={`flex justify-between items-center w-[200px] h-6 text-white px-10 py-2 bg-black rounded-full max-md:px-5 max-md:max-w-full cursor-pointer ${selectedChoices[index] ? 'bg-gray-700' : 'bg-black'}`}
-                        >
-                            {/* Display the percentage before each choice */}
-                            <span className="text-sm pr-2">({percentage.toFixed(1)}%)</span>
-                            <span>{choix}</span>
-                            {/* Display the click count next to each choice */}
-                            <span>({clickCounts[index]})</span>
-                        </div>
-                    );
-                })}
+  const currentQuestion = q[currentQuestionIndex];
+
+  return (
+    <>
+      <div className="fixed inset-20 flex flex-col justify-center bg-white shadow-lg p-6 rounded-lg overflow-x-auto">
+        <div className="flex flex-col items-center">
+          <div className="mt-6">
+            <div className="text-2xl font-bold mt-auto flex justify-center">
+              {titre}
             </div>
+            <div className="text-gray-600 mb-9 max-w-[700px] text-center">
+              {description}
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-8 mb-4 rounded w-[1000px] p-4">
+            <div className="flex flex-col items-center mb-4 w-full">
+              <div className="text-black mb-2 font-semibold">
+                {currentQuestion.question}
+              </div>
+              <ul className="w-full">
+                {currentQuestion.choix.map((choice, idx) => (
+                  <li key={idx} className="mb-2 w-full">
+                    <button
+                      className="relative w-full bg-gray-200 rounded overflow-hidden"
+                      onClick={() => handleClick(currentQuestion.question, choice)}
+                      style={{ height: '40px' }}
+                    >
+                      <div
+                        className="absolute left-0 top-0 h-full bg-blue-500"
+                        style={{
+                          width: `${getPercentage(currentQuestion.question, choice)}%`,
+                        }}
+                      ></div>
+                      <span className="relative z-10 text-black px-4">
+                        {choice} ({counts[currentQuestion.question][choice]}) - {getPercentage(currentQuestion.question, choice)}%
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
-    );
+        <div className="flex justify-between w-full">
+          <button
+            onClick={handleBack}
+            disabled={currentQuestionIndex === 0}
+            className="my-4 bg-gray-500 text-white font-bold py-2 px-4 w-20 rounded"
+          >
+            Back
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={currentQuestionIndex === q.length - 1}
+            className="my-4 bg-blue-500 text-white font-bold py-2 px-4 w-20 rounded"
+          >
+            Next
+          </button>
+        </div>
+        <div className="flex justify-center gap-5">
+          <button onClick={onClose} className="my-4 bg-red-500 text-white font-bold py-2 px-4 rounded">
+            Close
+          </button>
+          <button className="my-4 bg-green-500 text-white font-bold py-2 px-4 rounded">
+            Submit
+          </button>
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default QuestionComponent;
