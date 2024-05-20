@@ -24,7 +24,7 @@ function Question({ question, choix, handleQuestionChange, handleChoiceChange, a
             <input
                 type="text"
                 placeholder={`Choice ${index + 1}`}
-                value={choice}
+                value={choice.name}
                 onChange={(e) => handleChoiceChange(index, e.target.value)}
                 className="input-field bg-white block w-full  rounded-lg px-4 py-2"
                 required

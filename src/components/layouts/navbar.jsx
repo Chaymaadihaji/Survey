@@ -6,15 +6,15 @@ function Nav() {
   return (
     <nav className="bg-gray-800 p-4">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <div className="text-white font-bold text-xl">Survey App</div>
+        <div><a href="/" className="text-white font-bold text-xl">Survey App </a> </div>
         <ul className="flex space-x-4">
           <li><a href="/" className="text-white hover:text-gray-300">Home</a></li>
           <li><a href="/createSondage" className="text-white hover:text-gray-300">Create Survey</a></li>
           <li><a href="/Sondages" className="text-white hover:text-gray-300">Surveys</a></li>
           {/* Add more links as needed */}
         </ul>
-      </div>
-    </nav>
+        </div>
+      </nav>
   );
 }
 

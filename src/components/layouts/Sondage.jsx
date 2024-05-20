@@ -4,7 +4,7 @@ import img from "../../public/img.png"
 import Popup from './popup';
 import Report from './Report';
 
-function Sondage({ titre, description, values, q, loading }) {
+function Sondage({ titre, description, values, q, id, loading }) {
   const [isPopupDetOpen, setPopupDetOpen] = useState(false);
   const [isPopupResOpen, setPopupResOpen] = useState(false);
 
@@ -14,6 +14,15 @@ function Sondage({ titre, description, values, q, loading }) {
   const togglePopupRes = () => {
     setPopupResOpen(!isPopupResOpen);
   };
+  const [counts, setCounts] = useState(
+    q.reduce((acc, question) => {
+      acc[question.question] = question.choix.reduce((a, c) => {
+        a[c.name] = c.count;
+        return a;
+      }, {});
+      return acc;
+    }, {})
+  );
 
   return (
     <>
@@ -26,7 +35,7 @@ function Sondage({ titre, description, values, q, loading }) {
         <button onClick={togglePopupRes} className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-[5px] inline-block'>Show Results</button>
         </div>
       </div>
-      {isPopupDetOpen && <Popup onClose={togglePopupDet} q={q} titre={titre} description={description} values={values} loading={loading} />}
+      {isPopupDetOpen && <Popup onClose={togglePopupDet} q={q} titre={titre} description={description} values={values} id={id} loading={loading} />}
       {isPopupResOpen && <Report onClose={togglePopupRes} q={q} titre={titre} description={description} values={values} loading={loading} />}
     </>
   );

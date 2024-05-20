@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import "../index.css";
-import Nav from "./components/navbar";
+import Nav from "./layouts/navbar";
 
-import Question from "./components/question";
+import Question from "./layouts/question";
 import { db } from "../fireBase/fireBase"
 import { addDoc, collection } from 'firebase/firestore';
 
@@ -40,7 +40,7 @@ function CreateSurvey() {
     const ajouterQuestion = () => {
         const newQuestion = {
             question: '',
-            choix: ['', ''] // Start with two empty choices
+            choix: [] // Start with two empty choices
         };
         setQuestions([...questions, newQuestion]);
     };
@@ -55,14 +55,14 @@ function CreateSurvey() {
     // Function to update choices for a specific question
     const handleChoiceChange = (questionIndex, choiceIndex, value) => {
         const updatedQuestions = [...questions];
-        updatedQuestions[questionIndex].choix[choiceIndex] = value;
+        updatedQuestions[questionIndex].choix[choiceIndex] = {...updatedQuestions[questionIndex].choix[choiceIndex],name: value};
         setQuestions(updatedQuestions);
     };
 
     // Function to add a new choice to a specific question
     const ajouterChoix = (questionIndex) => {
         const updatedQuestions = [...questions];
-        updatedQuestions[questionIndex].choix.push(''); // Add an empty choice
+        updatedQuestions[questionIndex].choix.push({ count: 0, name: "" }); // Add an empty choice
         setQuestions(updatedQuestions);
 
     };

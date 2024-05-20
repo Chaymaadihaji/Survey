@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
+import { db } from "../../fireBase/fireBase";
+import { doc, setDoc } from "firebase/firestore";
 
+function QuestionComponent({ onClose, titre, description, q, id }) {
+  // Initialize state for whether choices have been clicked
+  const [clicked, setClicked] = useState(
+    q.reduce((acc, question) => {
+      acc[question.question] = question.choix.reduce((a, c) => {
+        a[c.name] = false;
+        return a;
+      }, {});
+      return acc;
+    }, {})
+  );
 
-
-function QuestionComponent({ onClose, titre, description, q }) {
-  // Initialize state for selected choices and click counts of each choice
+  // Initialize counts state
   const [counts, setCounts] = useState(
     q.reduce((acc, question) => {
       acc[question.question] = question.choix.reduce((a, c) => {
-        a[c] = 0;
+        a[c.name] = c.count;
         return a;
       }, {});
       return acc;
@@ -19,19 +30,18 @@ function QuestionComponent({ onClose, titre, description, q }) {
   const handleClick = (question, choice) => {
     setCounts(prevCounts => {
       const newCounts = { ...prevCounts };
-      newCounts[question][choice] += 1;
+      newCounts[question][choice.name] = clicked[currentQuestion.question][choice.name] ? 0 : 1;
       return newCounts;
+      
+    });
+
+    setClicked(prevClicked => {
+      const newClicked = { ...prevClicked };
+      newClicked[question][choice.name] = !prevClicked[question][choice.name];
+      return newClicked;
     });
   };
-
-  const totalClicks = (question) => {
-    return Object.values(counts[question]).reduce((sum, count) => sum + count, 0);
-  };
-
-  const getPercentage = (question, choice) => {
-    const total = totalClicks(question);
-    return total > 0 ? ((counts[question][choice] / total) * 100).toFixed(2) : 0;
-  };
+  
 
   const handleNext = () => {
     setCurrentQuestionIndex(prevIndex => Math.min(prevIndex + 1, q.length - 1));
@@ -42,6 +52,30 @@ function QuestionComponent({ onClose, titre, description, q }) {
   };
 
   const currentQuestion = q[currentQuestionIndex];
+
+  const handleSubmit = async () => {
+    const updatedQuestions = q.map(question => {
+      const updatedChoix = question.choix.map(choice => {
+        return {
+          ...choice,
+          count: counts[question.question][choice.name]
+        };
+      });
+      return {
+        ...question,
+        choix: updatedChoix
+      };
+      
+    });
+
+    await setDoc(doc(db, "surveys", id), {
+      questions: updatedQuestions,
+      titre: titre,
+      description: description
+    });
+
+    alert("Update successfully");
+  };
 
   return (
     <>
@@ -64,18 +98,12 @@ function QuestionComponent({ onClose, titre, description, q }) {
                 {currentQuestion.choix.map((choice, idx) => (
                   <li key={idx} className="mb-2 w-full">
                     <button
-                      className="relative w-full bg-gray-200 rounded overflow-hidden"
+                      className={`relative w-full rounded overflow-hidden ${counts[currentQuestion.question][choice.name] > choice.count ? 'bg-blue-500' : 'bg-gray-200'}`}
                       onClick={() => handleClick(currentQuestion.question, choice)}
                       style={{ height: '40px' }}
                     >
-                      <div
-                        className="absolute left-0 top-0 h-full bg-blue-500"
-                        style={{
-                          width: `${getPercentage(currentQuestion.question, choice)}%`,
-                        }}
-                      ></div>
                       <span className="relative z-10 text-black px-4">
-                        {choice} ({counts[currentQuestion.question][choice]}) - {getPercentage(currentQuestion.question, choice)}%
+                      {choice.name} ({counts[currentQuestion.question][choice.name]})
                       </span>
                     </button>
                   </li>
@@ -104,7 +132,9 @@ function QuestionComponent({ onClose, titre, description, q }) {
           <button onClick={onClose} className="my-4 bg-red-500 text-white font-bold py-2 px-4 rounded">
             Close
           </button>
-          <button className="my-4 bg-green-500 text-white font-bold py-2 px-4 rounded">
+          <button 
+            onClick={handleSubmit}
+            className="my-4 bg-green-500 text-white font-bold py-2 px-4 rounded">
             Submit
           </button>
         </div>
