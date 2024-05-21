@@ -11,7 +11,8 @@ function Nav() {
           <li><a href="/" className="text-white hover:text-gray-300">Home</a></li>
           <li><a href="/createSondage" className="text-white hover:text-gray-300">Create Survey</a></li>
           <li><a href="/Sondages" className="text-white hover:text-gray-300">Surveys</a></li>
-          {/* Add more links as needed */}
+          <li><a href="/contact" className="text-white hover:text-gray-300">Contact</a></li>
+          
         </ul>
         </div>
       </nav>

@@ -11,6 +11,7 @@ import CreateSurvey from "./components/CreateSurvey.jsx"
 import Survey from './components/Survey.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Contact from './components/layouts/contact.jsx'
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
     path:"/sondages",
     element:<Survey/>
+  },
+  {
+    path:"/contact",
+    element:<Contact/>
   }
 ]);
 
